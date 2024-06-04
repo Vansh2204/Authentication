@@ -3,16 +3,15 @@ const User = require('./modals/user');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const app = express();
-app.use(cors() )
+app.use(cors())
 app.use(express.json());
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-    res.send('All users')
+app.get('/', async (req, res) => {
+    const allusers = await User.find({});
+    res.json(allusers)
 });
 
 app.post('/register', async (req, res) => {
@@ -47,13 +46,7 @@ app.post('/register', async (req, res) => {
         userinfo.token = token;
         userinfo.password = undefined;
 
-
-
         res.status(201).json(userinfo);
-
-
-
-
 
     } catch (error) {
         console.log(error)
@@ -69,7 +62,7 @@ app.post('/login', async (req, res) => {
             res.status(400).send('Send all')
 
         }
-        //find user in DB
+        //find user in database
         const user = await User.findOne({ username })
         //if user is not there
 
@@ -85,14 +78,7 @@ app.post('/login', async (req, res) => {
             );
             user.token = token
             user.password = undefined
-
-            //send token in user cookie 
-            //cookie
-            const option = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-                httpOnly: true
-            };
-            res.status(200).cookie("token", token, option).json({
+            res.status(200).json({
                 success: true,
                 token
             })
