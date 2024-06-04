@@ -14,7 +14,7 @@ export function Signup() {
              }).then((res)=>{
                  return res.json()
              }).then(()=>{
-                 navigate('/login')
+                 navigate('/home') && console.log('User Registered');
             })
          }
         
