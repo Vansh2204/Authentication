@@ -27,9 +27,9 @@ app.post('/register', async (req, res) => {
             res.status(401).send('User already exists')
         }
 
-        //encrypt
+        //hashes the password or encrypt ( here 10 is the salt value would be added to the hash value )
         const encryptedpassword = await bcrypt.hash(password, 10)
-        //save user
+        //save user and the password would be saved in hashvalue 
         const userinfo = await User.create({
             username,
             email,
@@ -66,7 +66,7 @@ app.post('/login', async (req, res) => {
         const user = await User.findOne({ username })
         //if user is not there
 
-        //match password for login
+        //match password for login and compare it with the password with password entered by the username
 
         if (user && (await bcrypt.compare(password, user.password))) {
             const token = jwt.sign(
@@ -78,9 +78,9 @@ app.post('/login', async (req, res) => {
             );
             user.token = token
             user.password = undefined
-            res.status(200).json({
-                success: true,
-                token
+            res.status(200).json({ 
+                success: true,   
+                token   // token generated 
             })
             console.log("Logged in Succesfully")
         }
